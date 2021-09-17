@@ -10587,6 +10587,7 @@ exec "$@"
         cmd += ['-sUSE_SDL=2']
       if 'thread' in function:
         cmd.append('-sUSE_PTHREADS')
+        cmd.append('-sPTHREADS_PROFILING')
       if 'glGetStringi' in function:
         cmd.append('-sUSE_WEBGL2')
       if 'glMapBufferRange' in function:

@@ -174,7 +174,7 @@ _deps_info = {
   'mktime': ['_get_tzname', '_get_daylight', '_get_timezone', 'malloc'],
   'mmap': ['memalign'],
   'munmap': ['free'],
-  'pthread_create': ['malloc', 'free', 'emscripten_main_thread_process_queued_calls'],
+  '__pthread_create_js': ['emscripten_builtin_malloc', 'malloc', 'emscripten_builtin_free', 'emscripten_builtin_memalign', 'emscripten_main_thread_process_queued_calls'],
   'recv': ['htons'],
   'accept': ['htons'],
   'recvfrom': ['htons'],

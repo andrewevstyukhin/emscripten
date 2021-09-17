@@ -2121,12 +2121,18 @@ def phase_linker_setup(options, state, newargs, settings_map):
     else:
       settings.UBSAN_RUNTIME = 2
 
-  if 'leak' in sanitize:
-    settings.USE_LSAN = 1
-    default_setting('EXIT_RUNTIME', 1)
-
-    if settings.LINKABLE:
-      exit_with_error('LSan does not support dynamic linking')
+  sanitizer_mem = 0
+  if sanitize:
+    # sanitizers do at least 9 page allocs of a single page during startup.
+    sanitizer_mem += webassembly.WASM_PAGE_SIZE * 9
+    sanitizer_mem += 2097152 * 10
+    # we also allocate at least 11 "regions". Each region is kRegionSize (2 << 20) but
+    # MmapAlignedOrDieOnFatalError adds another 2 << 20 for alignment.
+    sanitizer_mem += (1 << 21) * 11
+    # When running in the threaded mode asan needs to allocate an array of kMaxNumberOfThreads
+    # (1 << 22) pointers.  See compiler-rt/lib/asan/asan_thread.cpp.
+    if settings.USE_PTHREADS:
+      sanitizer_mem += (1 << 22) * 4
 
   if 'address' in sanitize:
     settings.USE_ASAN = 1
@@ -2200,6 +2206,18 @@ def phase_linker_setup(options, state, newargs, settings_map):
 
     if settings.LINKABLE:
       exit_with_error('ASan does not support dynamic linking')
+  elif 'leak' in sanitize:
+    settings.USE_LSAN = 1
+    default_setting('EXIT_RUNTIME', 1)
+
+    if settings.LINKABLE:
+      exit_with_error('LSan does not support dynamic linking')
+
+  if sanitizer_mem:
+    # Increase the size of the initial memory according to how much memory
+    # we think the sanitizers will use.
+    logger.debug(f'adding {sanitizer_mem} bytes of memory for sanitizer support')
+    settings.INITIAL_MEMORY += sanitizer_mem
 
   if sanitize and settings.GENERATE_SOURCE_MAP:
     settings.LOAD_SOURCE_MAP = 1
@@ -2222,7 +2240,6 @@ def phase_linker_setup(options, state, newargs, settings_map):
   if settings.RELOCATABLE or \
      settings.BUILD_AS_WORKER or \
      settings.USE_WEBGPU or \
-     settings.USE_PTHREADS or \
      settings.OFFSCREENCANVAS_SUPPORT or \
      settings.LEGACY_GL_EMULATION or \
      not settings.DISABLE_EXCEPTION_CATCHING or \
@@ -2237,6 +2254,11 @@ def phase_linker_setup(options, state, newargs, settings_map):
      options.memory_profiler or \
      sanitize:
     settings.EXPORTED_FUNCTIONS += ['_malloc', '_free']
+
+  # TODO(sbc): Remove this when we land:
+  # https://github.com/emscripten-core/emscripten/pull/14912
+  if settings.USE_PTHREADS:
+    settings.EXPORTED_FUNCTIONS += ['_malloc', '_free', '_emscripten_builtin_memalign', '_emscripten_builtin_malloc', '_emscripten_builtin_free']
 
   if not settings.DISABLE_EXCEPTION_CATCHING:
     settings.EXPORTED_FUNCTIONS += [

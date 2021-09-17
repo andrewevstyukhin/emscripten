@@ -55,7 +55,7 @@ var LibraryPThread = {
 
 #if PTHREADS_PROFILING
     createProfilerBlock: function(pthreadPtr) {
-      var profilerBlock = _malloc({{{ C_STRUCTS.thread_profiler_block.__size__ }}});
+      var profilerBlock = _emscripten_builtin_malloc({{{ C_STRUCTS.thread_profiler_block.__size__ }}});
       Atomics.store(HEAPU32, (pthreadPtr + {{{ C_STRUCTS.pthread.profilerBlock }}} ) >> 2, profilerBlock);
 
       // Zero fill contents at startup.
@@ -156,12 +156,12 @@ var LibraryPThread = {
 #if PTHREADS_PROFILING
         var profilerBlock = {{{ makeGetValue('pthread.threadInfoStruct', C_STRUCTS.pthread.profilerBlock, 'i32') }}};
         {{{ makeSetValue('pthread.threadInfoStruct',  C_STRUCTS.pthread.profilerBlock, 0, 'i32') }}};
-        _free(profilerBlock);
+        _emscripten_builtin_free(profilerBlock);
 #endif
-        _free(pthread.threadInfoStruct);
+        _emscripten_builtin_free(pthread.threadInfoStruct);
       }
       pthread.threadInfoStruct = 0;
-      if (pthread.allocatedOwnStack && pthread.stackBase) _free(pthread.stackBase);
+      if (pthread.allocatedOwnStack && pthread.stackBase) _emscripten_builtin_free(pthread.stackBase);
       pthread.stackBase = 0;
       if (pthread.worker) pthread.worker.pthread = null;
     },
@@ -633,7 +633,7 @@ var LibraryPThread = {
   },
 
   __pthread_create_js__sig: 'iiiii',
-  __pthread_create_js__deps: ['$spawnThread', 'pthread_self', 'memalign', 'emscripten_sync_run_in_main_thread_4'],
+  __pthread_create_js__deps: ['$spawnThread', 'pthread_self', 'emscripten_builtin_memalign', 'emscripten_sync_run_in_main_thread_4'],
   __pthread_create_js: function(pthread_ptr, attr, start_routine, arg) {
     if (typeof SharedArrayBuffer === 'undefined') {
       err('Current environment does not support SharedArrayBuffer, pthreads are not available!');
@@ -702,7 +702,7 @@ var LibraryPThread = {
             // Create a shared information block in heap so that we can control
             // the canvas size from any thread.
             if (!canvas.canvasSharedPtr) {
-              canvas.canvasSharedPtr = _malloc(12);
+              canvas.canvasSharedPtr = _emscripten_builtin_malloc(12);
               {{{ makeSetValue('canvas.canvasSharedPtr', 0, 'canvas.width', 'i32') }}};
               {{{ makeSetValue('canvas.canvasSharedPtr', 4, 'canvas.height', 'i32') }}};
               {{{ makeSetValue('canvas.canvasSharedPtr', 8, 0, 'i32') }}}; // pthread ptr to the thread that owns this canvas, filled in below.
@@ -782,7 +782,7 @@ var LibraryPThread = {
     if (allocatedOwnStack) {
       // Allocate a stack if the user doesn't want to place the stack in a
       // custom memory area.
-      stackBase = _memalign({{{ STACK_ALIGN }}}, stackSize);
+      stackBase = _emscripten_builtin_memalign({{{ STACK_ALIGN }}}, stackSize);
     } else {
       // Musl stores the stack base address assuming stack grows downwards, so
       // adjust it to Emscripten convention that the

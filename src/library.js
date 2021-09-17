@@ -3782,6 +3782,8 @@ LibraryManager.library = {
   // tell the memory segments where to place themselves
   __memory_base: '{{{ GLOBAL_BASE }}}',
   __memory_base__import: true,
+  __global_base: '{{{ GLOBAL_BASE }}}',
+  __global_base__import: true,
   // the wasm backend reserves slot 0 for the NULL function pointer
   __table_base: 1,
   __table_base__import: true,

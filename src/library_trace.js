@@ -219,6 +219,12 @@ var LibraryTracing = {
   },
 
   emscripten_trace_record_allocation: function(address, size) {
+    //err('emscripten_trace_record_allocation: ' + size)
+    /*
+    if (size > 10*1024) {
+      throw new Error("xxx"); //console.trace();
+    }
+    */
     if (typeof Module['onMalloc'] === 'function') Module['onMalloc'](address, size);
     if (EmscriptenTrace.postEnabled) {
       var now = EmscriptenTrace.now();
