@@ -30,6 +30,15 @@
 extern "C" {
 #endif
 
+void emscripten_console_log(const char *utf8String);
+void emscripten_console_warn(const char *utf8String);
+void emscripten_console_error(const char *utf8String);
+
+void emscripten_throw_number(double number);
+void emscripten_throw_string(const char *utf8String);
+
+void emscripten_unwind_to_js_event_loop(void) __attribute__((noreturn));
+
 void emscripten_run_script(const char *script);
 int emscripten_run_script_int(const char *script);
 char *emscripten_run_script_string(const char *script);

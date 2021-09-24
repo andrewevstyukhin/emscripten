@@ -10994,3 +10994,11 @@ void foo() {}
     self.do_runf(test_file('other', 'test_default_pthread_stack_size.c'))
     self.emcc_args.append('-sUSE_PTHREADS')
     self.do_runf(test_file('other', 'test_default_pthread_stack_size.c'))
+
+  # Test emscripten_console_log(), emscripten_console_warn() and emscripten_console_error()
+  def test_emscripten_console_log(self):
+    self.do_runf(test_file('emscripten_console_log.c'), emcc_args=['--pre-js', test_file('emscripten_console_log_pre.js')])
+
+  # Tests emscripten_unwind_to_js_event_loop() behavior
+  def test_emscripten_unwind_to_js_event_loop(self, *args):
+    self.do_runf(test_file('other/test_emscripten_unwind_to_js_event_loop.c'))

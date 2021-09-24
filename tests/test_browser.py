@@ -4972,10 +4972,6 @@ window.close = function() {
   def test_embind_with_asyncify(self):
     self.btest('embind_with_asyncify.cpp', '1', args=['--bind', '-s', 'ASYNCIFY'])
 
-  # Test emscripten_console_log(), emscripten_console_warn() and emscripten_console_error()
-  def test_emscripten_console_log(self):
-    self.btest(test_file('emscripten_console_log.c'), '0', args=['--pre-js', test_file('emscripten_console_log_pre.js')])
-
   def test_emscripten_throw_number(self):
     self.btest(test_file('emscripten_throw_number.c'), '0', args=['--pre-js', test_file('emscripten_throw_number_pre.js')])
 
@@ -5014,10 +5010,6 @@ window.close = function() {
   @requires_threads
   def test_offset_converter(self, *args):
     self.btest_exit(test_file('browser/test_offset_converter.c'), assert_returncode=1, args=['-s', 'USE_OFFSET_CONVERTER', '-gsource-map', '-s', 'PROXY_TO_PTHREAD', '-s', 'USE_PTHREADS'])
-
-  # Tests emscripten_unwind_to_js_event_loop() behavior
-  def test_emscripten_unwind_to_js_event_loop(self, *args):
-    self.btest_exit(test_file('browser/test_emscripten_unwind_to_js_event_loop.c'))
 
   def test_wasm2js_fallback(self):
     self.set_setting('EXIT_RUNTIME')

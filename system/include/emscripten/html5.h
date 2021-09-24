@@ -497,15 +497,6 @@ void emscripten_clear_interval(long setIntervalId);
 double emscripten_date_now(void);
 double emscripten_performance_now(void);
 
-void emscripten_console_log(const char *utf8String);
-void emscripten_console_warn(const char *utf8String);
-void emscripten_console_error(const char *utf8String);
-
-void emscripten_throw_number(double number);
-void emscripten_throw_string(const char *utf8String);
-
-void emscripten_unwind_to_js_event_loop(void) __attribute__((noreturn));
-
 #ifdef __cplusplus
 } // ~extern "C"
 #endif
