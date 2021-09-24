@@ -593,17 +593,19 @@ function abort(what) {
   }
 #endif
 
-  what += '';
+  what = 'Aborted(' + what + ')';
+  // TODO(sbc): Should we remove printing and leave it up to whoever
+  // catches the exception?
   err(what);
 
   ABORT = true;
   EXITSTATUS = 1;
 
 #if ASSERTIONS == 0
-  what = 'abort(' + what + '). Build with -s ASSERTIONS=1 for more info.';
+  what += '. Build with -s ASSERTIONS=1 for more info.';
 #else
-  var output = 'abort(' + what + ') at ' + stackTrace();
-  what = output;
+  // TODO(sbc): When would need to do this?
+  //what += ' at ' + stackTrace();
 #endif // ASSERTIONS
 
   // Use a wasm runtime error, because a JS error might be seen as a foreign

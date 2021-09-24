@@ -3406,7 +3406,7 @@ window.close = function() {
     ''')
     print('Deleting a.out.wasm to cause a download error')
     os.remove('a.out.wasm')
-    self.run_browser('a.html', '...', '/report_result?abort(both async and sync fetching of the wasm failed)')
+    self.run_browser('a.html', '...', '/report_result?Aborted(both async and sync fetching of the wasm failed)')
 
   def test_modularize_init_error(self):
     test_cpp_path = test_file('browser/test_modularize_init_error.cpp')
