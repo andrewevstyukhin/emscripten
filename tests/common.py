@@ -1004,7 +1004,7 @@ class RunnerCore(unittest.TestCase, metaclass=RunnerMeta):
     self._build_and_run(filename, expected_output, **kwargs)
 
   def do_runf(self, filename, expected_output=None, **kwargs):
-    self._build_and_run(filename, expected_output, **kwargs)
+    return self._build_and_run(filename, expected_output, **kwargs)
 
   ## Just like `do_run` but with filename of expected output
   def do_run_from_file(self, filename, expected_output_filename, **kwargs):
@@ -1077,6 +1077,7 @@ class RunnerCore(unittest.TestCase, metaclass=RunnerMeta):
         except Exception:
           print('(test did not pass in JS engine: %s)' % engine)
           raise
+    return js_output
 
   def get_freetype_library(self):
     if '-Werror' in self.emcc_args:

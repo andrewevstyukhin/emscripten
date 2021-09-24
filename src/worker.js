@@ -271,7 +271,6 @@ self.onmessage = function(e) {
           else
 #endif // !MINIMAL_RUNTIME
           {
-            Module['__emscripten_thread_exit'](-2);
             throw ex;
           }
 #if ASSERTIONS
