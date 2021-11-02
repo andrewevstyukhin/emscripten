@@ -3,13 +3,8 @@
 
 int main()
 {
-	Dispatcher::Instance().OnE(
-		[](Dispatcher::Delegate::Result)
-		{
-			std::printf("1");
-		}
-	);
+	class C : public Delegate {};
+	[[maybe_unused]] static auto c = new C();
 
-	Dispatcher::Test();
 	return 0;
 }
